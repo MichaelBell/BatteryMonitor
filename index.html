@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rebellion Battery Monitor</title>
+<script src="/plotly-latest.min.js"></script>
+</head>
+<body>
+<div id="voltage" style="width: 370px; height: 250px; float: left"><!-- Plotly chart will be drawn inside this DIV --></div>
+<div id="graph" style="width: 70%; height: 600px; float: right"><!-- Plotly chart will be drawn inside this DIV --></div>
+<script>
+
+function display()
+{
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', '/history?readings=1440&interval=10', true);
+  xhr.responseType = 'json';
+  xhr.onload = function() {
+    if (xhr.status == 200) {
+      var data = xhr.response;
+      if (data.length > 0) {
+        var power = {
+          x: [], y: [], 
+          mode: 'lines',
+          name: 'Power (W)'
+        };
+        var charge = {
+          x: [], y: [], 
+          mode: 'lines',
+          name: 'Charge %',
+          yaxis: 'y2'
+        };
+        var lastCharge = data.length > 0 ? data[0].Charge : 0;
+        for (var i = 0; i < data.length; ++i) {
+          power.x.push(data[i].Time*1000);
+          power.y.push(data[i].Power);
+          if (data[i].Charge != lastCharge) {
+            charge.x.push(data[i].Time*1000);
+            charge.y.push(data[i].Charge);
+            lastCharge = data[i].Charge;
+          }
+        }
+        var plotData = [power, charge];
+        var layout = {
+          xaxis: {type: 'date'},
+          yaxis: {titlefont: {color: '#1f77b4'}, tickfont: {color: '#1f77b4'}},
+          yaxis2: {overlaying: 'y', side: 'right', titlefont: {color: '#ff7f0e'}, tickfont: {color: '#ff7f0e'}}
+        };
+        Plotly.newPlot('graph', plotData, layout);
+        
+// Enter a speed between 0 and 180
+var voltage = data[data.length - 1].Voltage;
+var level = (voltage - 11) * (Math.PI / 3.5);
+
+// Trig to calc meter point
+var x = -0.6 * Math.cos(level);
+var y = 0.6 * Math.sin(level);
+
+// Path: may have to change to create a better triangle
+var mainPath = 'M -.02 -0.0 L 0.02 0.0 L ',
+     pathX = String(x),
+     space = ' ',
+     pathY = String(y),
+     pathEnd = ' Z';
+var path = mainPath.concat(pathX,space,pathY,pathEnd);
+
+var vdata = [{ type: 'scatter',
+   x: [0], y:[0],
+    marker: {size: 3, color:'850000'},
+    showlegend: false,
+    name: 'V',
+    text: voltage,
+    hoverinfo: 'text+name'},
+  { values: [50, 125, 45, 30, 30, 70, 350],
+  rotation: 64,
+  text: ['', 'Charge', 'Good', 'OK',
+            'Bad', 'Danger', ''],
+  textinfo: 'text',
+  textposition:'inside',
+  marker: {colors:['rgba(14, 127, 0, .5)', 'rgba(110, 154, 22, .5)',
+                         'rgba(170, 202, 42, .5)', 'rgba(255, 236, 68, .5)',
+                         'rgba(255, 161, 20, .5)', 'rgba(255, 32, 7, .5)',
+                         'rgba(255, 255, 255, 1)']},
+  labels: ['14.0-14.5', '12.7-14.0', '12.3-12.7', '12.0-12.3', '11.7-12.0', '11.0-11.7', '    '],
+  hoverinfo: 'label',
+  hole: .5,
+  type: 'pie',
+  sort: false,
+  showlegend: false
+}];
+
+var vlayout = {
+  shapes:[{
+      type: 'path',
+      path: path,
+      fillcolor: '850000',
+      line: {
+        color: '850000'
+      }
+    }],
+  title: 'Voltage',
+  height: 400,
+  width: 400,
+  xaxis: {zeroline:false, showticklabels:false,
+             showgrid: false, range: [-1, 1]},
+  yaxis: {zeroline:false, showticklabels:false,
+             showgrid: false, range: [-1, 1]}
+};
+
+Plotly.newPlot('voltage', vdata, vlayout);
+
+      }
+    }
+  }
+  xhr.send();
+}
+display();
+setInterval(display, 10000);
+</script>
+</body>
+</html>
