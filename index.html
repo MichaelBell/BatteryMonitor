@@ -5,8 +5,10 @@
 <script src="/plotly-latest.min.js"></script>
 </head>
 <body>
+<div style="width:370px; height:50px; float:left"></div>
+<div id="graph" style="width: 75%; height: 600px; float: right"><!-- Plotly chart will be drawn inside this DIV --></div>
 <div id="voltage" style="width: 370px; height: 250px; float: left"><!-- Plotly chart will be drawn inside this DIV --></div>
-<div id="graph" style="width: 70%; height: 600px; float: right"><!-- Plotly chart will be drawn inside this DIV --></div>
+<div id="current" style="width: 370px; height: 250px; float: left"><!-- Plotly chart will be drawn inside this DIV --></div>
 <script>
 
 function display()
@@ -46,8 +48,8 @@ function display()
           yaxis2: {overlaying: 'y', side: 'right', titlefont: {color: '#ff7f0e'}, tickfont: {color: '#ff7f0e'}}
         };
         Plotly.newPlot('graph', plotData, layout);
-        
-// Enter a speed between 0 and 180
+{
+// Voltage gauge        
 var voltage = data[data.length - 1].Voltage;
 var level = (voltage - 11) * (Math.PI / 3.5);
 
@@ -107,7 +109,81 @@ var vlayout = {
 };
 
 Plotly.newPlot('voltage', vdata, vlayout);
+}
 
+{
+// Current gauge        
+var current = data[data.length - 1].Current;
+var level;
+if (current > 20)
+{
+  level = 0.75*Math.PI + (current - 20) * (0.25*Math.PI / 180);
+}
+else if (current < -40)
+{
+  level = 0;
+}
+else
+{
+  level = 0.5*Math.PI + current * (0.25*Math.PI / 20);
+}
+
+// Trig to calc meter point
+var x = -0.6 * Math.cos(level);
+var y = 0.6 * Math.sin(level);
+
+// Path: may have to change to create a better triangle
+var mainPath = 'M -.02 -0.0 L 0.02 0.0 L ',
+     pathX = String(x),
+     space = ' ',
+     pathY = String(y),
+     pathEnd = ' Z';
+var path = mainPath.concat(pathX,space,pathY,pathEnd);
+
+var cdata = [{ type: 'scatter',
+   x: [0], y:[0],
+    marker: {size: 3, color:'850000'},
+    showlegend: false,
+    name: 'A',
+    text: current,
+    hoverinfo: 'text+name'},
+  { values: [25, 25, 25, 25, 100],
+  rotation: 45,
+  text: ['', 'Charge', 'Use', '',
+            ''],
+  textinfo: 'text',
+  textposition:'inside',
+  marker: {colors:['rgba(14, 127, 0, .5)', 'rgba(110, 154, 22, .5)',
+                         'rgba(255, 161, 20, .5)', 'rgba(255, 32, 7, .5)',
+                         'rgba(255, 255, 255, 1)']},
+  labels: ['> 20', '0 - 20', '-20 - 0', '< -20', '    '],
+  hoverinfo: 'label',
+  hole: .5,
+  type: 'pie',
+  sort: false,
+  showlegend: false
+}];
+
+var clayout = {
+  shapes:[{
+      type: 'path',
+      path: path,
+      fillcolor: '850000',
+      line: {
+        color: '850000'
+      }
+    }],
+  title: 'Current',
+  height: 400,
+  width: 400,
+  xaxis: {zeroline:false, showticklabels:false,
+             showgrid: false, range: [-1, 1]},
+  yaxis: {zeroline:false, showticklabels:false,
+             showgrid: false, range: [-1, 1]}
+};
+
+Plotly.newPlot('current', cdata, clayout);
+}
       }
     }
   }
