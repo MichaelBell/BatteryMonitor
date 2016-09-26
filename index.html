@@ -5,16 +5,31 @@
 <script src="/plotly-latest.min.js"></script>
 </head>
 <body>
-<div style="width:370px; height:50px; float:left"></div>
+<div style="width:370px; height:50px; float:left; text-align:center; padding-top:25px">
+<input type="button" onclick="SetRange(970, 63)" value="7 days">
+<input type="button" onclick="SetRange(980, 18)" value="2 days">
+<input type="button" onclick="SetRange(1000, 9)" value="1 day">
+<input type="button" onclick="SetRange(1080, 4)" value="12 hrs">
+</div>
 <div id="graph" style="width: 75%; height: 600px; float: right"><!-- Plotly chart will be drawn inside this DIV --></div>
 <div id="voltage" style="width: 370px; height: 250px; float: left"><!-- Plotly chart will be drawn inside this DIV --></div>
 <div id="current" style="width: 370px; height: 250px; float: left"><!-- Plotly chart will be drawn inside this DIV --></div>
 <script>
 
+var readings=1000;
+var interval=9;
+
+function SetRange(r, i)
+{
+  readings = r;
+  interval = i;
+  display();
+}
+
 function display()
 {
   var xhr = new XMLHttpRequest();
-  xhr.open('get', '/history?readings=1440&interval=10', true);
+  xhr.open('get', '/history?readings='+readings+'&interval='+interval, true);
   xhr.responseType = 'json';
   xhr.onload = function() {
     if (xhr.status == 200) {
@@ -101,7 +116,7 @@ var vlayout = {
     }],
   title: 'Voltage',
   height: 400,
-  width: 400,
+  width: 370,
   xaxis: {zeroline:false, showticklabels:false,
              showgrid: false, range: [-1, 1]},
   yaxis: {zeroline:false, showticklabels:false,
@@ -175,7 +190,7 @@ var clayout = {
     }],
   title: 'Current',
   height: 400,
-  width: 400,
+  width: 370,
   xaxis: {zeroline:false, showticklabels:false,
              showgrid: false, range: [-1, 1]},
   yaxis: {zeroline:false, showticklabels:false,
