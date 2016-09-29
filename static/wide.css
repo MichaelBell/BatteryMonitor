@@ -1,0 +1,19 @@
+#selector{
+  width: 370px;
+  height:50px; 
+  float:left; 
+  text-align:center; 
+  padding-top:25px;
+}
+
+#graph{
+  width: 75%; height: 750px; float: right;
+}
+
+#voltage{
+  width: 370px; height: 250px; float: left;
+}
+
+#current{
+  width: 370px; height: 250px; float: left;
+}

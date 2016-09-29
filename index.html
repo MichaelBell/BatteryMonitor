@@ -2,18 +2,21 @@
 <html>
 <head>
 <title>Rebellion Battery Monitor</title>
-<script src="/plotly-latest.min.js"></script>
+<script src="/static/plotly-latest.min.js"></script>
+<link rel="stylesheet" media="screen and (min-width: 1500px)" href="/static/wide.css" />
+<link rel="stylesheet" media="screen and (min-width: 780px) and (max-width: 1499px)" href="/static/normal.css" />
+<link rel="stylesheet" media="screen and (max-width: 779px)" href="/static/narrow.css" />
 </head>
 <body>
-<div style="width:370px; height:50px; float:left; text-align:center; padding-top:25px">
+<div id="selector">
 <input type="button" onclick="SetRange(970, 63)" value="7 days">
 <input type="button" onclick="SetRange(980, 18)" value="2 days">
 <input type="button" onclick="SetRange(1000, 9)" value="1 day">
 <input type="button" onclick="SetRange(1080, 4)" value="12 hrs">
 </div>
-<div id="graph" style="width: 75%; height: 600px; float: right"><!-- Plotly chart will be drawn inside this DIV --></div>
-<div id="voltage" style="width: 370px; height: 250px; float: left"><!-- Plotly chart will be drawn inside this DIV --></div>
-<div id="current" style="width: 370px; height: 250px; float: left"><!-- Plotly chart will be drawn inside this DIV --></div>
+<div id="graph"></div>
+<div id="voltage"></div>
+<div id="current"></div>
 <script>
 
 var readings=1000;
@@ -85,7 +88,7 @@ var vdata = [{ type: 'scatter',
     marker: {size: 3, color:'850000'},
     showlegend: false,
     name: 'V',
-    text: voltage,
+    text: voltage.toFixed(3),
     hoverinfo: 'text+name'},
   { values: [50, 125, 45, 30, 30, 70, 350],
   rotation: 64,
@@ -114,7 +117,7 @@ var vlayout = {
         color: '850000'
       }
     }],
-  title: '<b>Voltage</b>\n'+voltage+' V',
+  title: '<b>Voltage</b><br>'+voltage.toFixed(3)+' V',
   height: 400,
   width: 370,
   xaxis: {zeroline:false, showticklabels:false,
@@ -160,7 +163,7 @@ var cdata = [{ type: 'scatter',
     marker: {size: 3, color:'850000'},
     showlegend: false,
     name: 'A',
-    text: current,
+    text: current.toFixed(3),
     hoverinfo: 'text+name'},
   { values: [25, 25, 25, 25, 100],
   rotation: 45,
@@ -188,7 +191,7 @@ var clayout = {
         color: '850000'
       }
     }],
-  title: '<b>Current</b>\n'+current+' A',
+  title: '<b>Current</b><br>'+current.toFixed(3)+' A',
   height: 400,
   width: 370,
   xaxis: {zeroline:false, showticklabels:false,

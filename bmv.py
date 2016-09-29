@@ -122,7 +122,32 @@ class BatteryServer:
   @cherrypy.expose
   @cherrypy.tools.json_out()
   def history(self, readings="300", interval="1"):
-    return self.history_data[-(int(readings)*int(interval))::int(interval)]
+    readings, interval = int(readings), int(interval)
+    start = -readings*interval
+    if -start > len(self.history_data):
+      start = len(self.history_data)
+      start = start - (start % interval)
+      start = -start
+    data = []
+    for i in xrange(start, -interval, interval):
+      data_slice = self.history_data[i:i+interval]
+      data.append({
+        "Time"   : data_slice[-1]["Time"],
+        "Power"  : sum([d['Power'] for d in data_slice]) / interval,
+        "Charge" : data_slice[-1]["Charge"],
+        "Voltage": sum([d['Voltage'] for d in data_slice]) / interval,
+        "Current": sum([d['Current'] for d in data_slice]) / interval
+      })
+    interval = interval if len(self.history_data) > interval else len(self.history_data)
+    data_slice = self.history_data[-interval:]
+    data.append({
+      "Time"   : data_slice[-1]["Time"],
+      "Power"  : sum([d['Power'] for d in data_slice]) / interval,
+      "Charge" : data_slice[-1]["Charge"],
+      "Voltage": sum([d['Voltage'] for d in data_slice]) / interval,
+      "Current": sum([d['Current'] for d in data_slice]) / interval
+    })
+    return data
 
   @cherrypy.expose
   def index(self):
@@ -130,7 +155,7 @@ class BatteryServer:
 
 print "Starting web server"
 server = BatteryServer()
-cherrypy.tree.mount(server, '/', {'/plotly-latest.min.js': {'tools.staticfile.on': True, 'tools.staticfile.filename': '/home/pi/battery/plotly-latest.min.js'}})
+cherrypy.tree.mount(server, '/', {'/static': {'tools.staticdir.on': True, 'tools.staticdir.dir': "/home/pi/battery/static"}})
 cherrypy.config.update({'engine.autoreload.on': False,
                         'server.socket_host'  : '0.0.0.0'})
 cherrypy.engine.start()
