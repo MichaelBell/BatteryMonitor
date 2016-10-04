@@ -49,21 +49,30 @@ function display()
           name: 'Charge %',
           yaxis: 'y2'
         };
+        var volt = {
+          x: [], y: [], 
+          mode: 'lines',
+          name: 'Voltage (V)',
+          yaxis: 'y3'
+        };
         var lastCharge = data.length > 0 ? data[0].Charge : 0;
         for (var i = 0; i < data.length; ++i) {
           power.x.push(data[i].Time*1000);
           power.y.push(data[i].Power);
+          volt.x.push(data[i].Time*1000);
+          volt.y.push(data[i].Voltage);
           if (data[i].Charge != lastCharge) {
             charge.x.push(data[i].Time*1000);
             charge.y.push(data[i].Charge);
             lastCharge = data[i].Charge;
           }
         }
-        var plotData = [power, charge];
+        var plotData = [power, charge, volt];
         var layout = {
           xaxis: {type: 'date'},
           yaxis: {titlefont: {color: '#1f77b4'}, tickfont: {color: '#1f77b4'}},
-          yaxis2: {overlaying: 'y', side: 'right', titlefont: {color: '#ff7f0e'}, tickfont: {color: '#ff7f0e'}}
+          yaxis2: {overlaying: 'y', side: 'right', titlefont: {color: '#ff7f0e'}, tickfont: {color: '#ff7f0e'}},
+          yaxis3: {overlaying: 'y', side: 'left', titlefont: {color: '#2ca02c'}, tickfont: {color: '#2ca02c'}}
         };
         Plotly.newPlot('graph', plotData, layout);
 {
