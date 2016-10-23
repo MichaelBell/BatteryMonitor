@@ -1,11 +1,13 @@
 #selector{
-  width: 100%;
-  height:50px; 
+  width: 50%;
+  height:40px; 
   text-align:center; 
   padding-top:25px;
+  float:left;
 }
 
 #graph{
+  clear:both;
   width: 100%; height: 600px;
 }
 
@@ -15,4 +17,16 @@
 
 #current{
   width: 370px; height: 250px;
+}
+
+#graph2{
+  clear:both;
+  width: 100%; height: 600px;
+}
+
+#weather{
+  height:40px;
+  float:right;
+  padding-top:12px;
+  font-family:sans-serif;
 }

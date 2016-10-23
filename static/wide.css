@@ -10,10 +10,21 @@
   width: 75%; height: 750px; float: right;
 }
 
+#graph2{
+  width: 75%; height: 750px; float: right;
+}
+
 #voltage{
   width: 370px; height: 250px; float: left;
 }
 
 #current{
   width: 370px; height: 250px; float: left;
+}
+
+#weather{
+  height:40px;
+  float:right;
+  padding-top:12px;
+  font-family:sans-serif;
 }

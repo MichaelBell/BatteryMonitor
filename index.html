@@ -14,9 +14,11 @@
 <input type="button" onclick="SetRange(1000, 9)" value="1 day">
 <input type="button" onclick="SetRange(1080, 4)" value="12 hrs">
 </div>
+<div id="weather"></div>
 <div id="graph"></div>
 <div id="voltage"></div>
 <div id="current"></div>
+<div id="graph2"></div>
 <script>
 
 var readings=1000;
@@ -215,6 +217,53 @@ Plotly.newPlot('current', cdata, clayout);
     }
   }
   xhr.send();
+
+  var wxhr = new XMLHttpRequest();
+  wxhr.open('get', 'http://bowpi:8080/status')
+  wxhr.responseType = 'json';
+  wxhr.onload = function() {
+    if (wxhr.status == 200) {
+      var data = wxhr.response;
+      document.getElementById('weather').innerHTML="<table><tr><td>Temp:</td><td>" + data.Temp + " C</td></tr><tr><td>Pressure:</td><td>" + data.Pres + " mBar</td></tr></table>";
+    }
+  }
+  wxhr.send();
+
+  var wgr = new XMLHttpRequest();
+  wgr.open('get', 'http://bowpi:8080/history?readings='+readings+'&interval='+Math.round(interval/3), true);
+  wgr.responseType = 'json';
+  wgr.onload = function() {
+    if (wgr.status == 200) {
+      var data = wgr.response;
+      if (data.length > 0) {
+        var pres = {
+          x: [], y: [],
+          mode: 'lines',
+          name: 'Pressure (mBar)'
+        };
+        var temp = {
+          x: [], y: [],
+          mode: 'lines',
+          name: 'Temp (C)',
+          yaxis: 'y2'
+        };
+        for (var i = 0; i < data.length; ++i) {
+          pres.x.push(data[i].Time*1000);
+          pres.y.push(data[i].Pres);
+          temp.x.push(data[i].Time*1000);
+          temp.y.push(data[i].Temp);
+        }
+        var plotData = [pres, temp];
+        var layout = {
+          xaxis: {type: 'date'},
+          yaxis: {titlefont: {color: '#1f77b4'}, tickfont: {color: '#1f77b4'}},
+          yaxis2: {overlaying: 'y', side: 'right', titlefont: {color: '#ff7f0e'}, tickfont: {color: '#ff7f0e'}},
+        };
+        Plotly.newPlot('graph2', plotData, layout);
+      }
+    }
+  }
+  wgr.send();
 }
 display();
 setInterval(display, 10000);
