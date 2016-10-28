@@ -151,11 +151,11 @@ class BatteryServer:
 
   @cherrypy.expose
   def index(self):
-    return cherrypy.lib.static.serve_file('/home/pi/battery/index.html')
+    return cherrypy.lib.static.serve_file('/home/pi/BatteryMonitor/index.html')
 
 print "Starting web server"
 server = BatteryServer()
-cherrypy.tree.mount(server, '/', {'/static': {'tools.staticdir.on': True, 'tools.staticdir.dir': "/home/pi/battery/static"}})
+cherrypy.tree.mount(server, '/', {'/static': {'tools.staticdir.on': True, 'tools.staticdir.dir': "/home/pi/BatteryMonitor/static"}})
 cherrypy.config.update({'engine.autoreload.on': False,
                         'server.socket_host'  : '0.0.0.0'})
 cherrypy.engine.start()
