@@ -6,6 +6,7 @@
 <link rel="stylesheet" media="screen and (min-width: 1500px)" href="/static/wide.css" />
 <link rel="stylesheet" media="screen and (min-width: 780px) and (max-width: 1499px)" href="/static/normal.css" />
 <link rel="stylesheet" media="screen and (max-width: 779px)" href="/static/narrow.css" />
+<link rel="apple-touch-icon" sizes="120x120" href="/static/Lion120.png" />
 </head>
 <body>
 <div id="selector">
@@ -101,7 +102,7 @@ var vdata = [{ type: 'scatter',
     name: 'V',
     text: voltage.toFixed(3),
     hoverinfo: 'text+name'},
-  { values: [50, 125, 45, 30, 30, 70, 350],
+  { values: [50, 125, 45, 50, 40, 40, 350],
   rotation: 64,
   text: ['', 'Charge', 'Good', 'OK',
             'Bad', 'Danger', ''],
@@ -111,7 +112,7 @@ var vdata = [{ type: 'scatter',
                          'rgba(170, 202, 42, .5)', 'rgba(255, 236, 68, .5)',
                          'rgba(255, 161, 20, .5)', 'rgba(255, 32, 7, .5)',
                          'rgba(255, 255, 255, 1)']},
-  labels: ['14.0-14.5', '12.7-14.0', '12.3-12.7', '12.0-12.3', '11.7-12.0', '11.0-11.7', '    '],
+  labels: ['14.0-14.5', '12.7-14.0', '12.3-12.7', '11.8-12.3', '11.4-11.8', '11.0-11.4', '    '],
   hoverinfo: 'label',
   hole: .5,
   type: 'pie',
