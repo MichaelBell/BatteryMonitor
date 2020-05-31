@@ -102,7 +102,7 @@ var vdata = [{ type: 'scatter',
     name: 'V',
     text: voltage.toFixed(3),
     hoverinfo: 'text+name'},
-  { values: [50, 125, 45, 50, 40, 40, 350],
+  { values: [50, 120, 50, 40, 40, 50, 350],
   rotation: 64,
   text: ['', 'Charge', 'Good', 'OK',
             'Bad', 'Danger', ''],
@@ -112,7 +112,7 @@ var vdata = [{ type: 'scatter',
                          'rgba(170, 202, 42, .5)', 'rgba(255, 236, 68, .5)',
                          'rgba(255, 161, 20, .5)', 'rgba(255, 32, 7, .5)',
                          'rgba(255, 255, 255, 1)']},
-  labels: ['14.0-14.5', '12.7-14.0', '12.3-12.7', '11.8-12.3', '11.4-11.8', '11.0-11.4', '    '],
+  labels: ['14.0-14.5', '12.8-14.0', '12.3-12.8', '11.9-12.3', '11.5-11.9', '11.0-11.5', '    '],
   hoverinfo: 'label',
   hole: .5,
   type: 'pie',
@@ -147,7 +147,7 @@ var current = data[data.length - 1].Current;
 var level;
 if (current > 20)
 {
-  level = 0.75*Math.PI + (current - 20) * (0.25*Math.PI / 180);
+  level = 0.75*Math.PI + (current - 20) * (0.25*Math.PI / 100);
 }
 else if (current < -40)
 {
@@ -220,18 +220,18 @@ Plotly.newPlot('current', cdata, clayout);
   xhr.send();
 
   var wxhr = new XMLHttpRequest();
-  wxhr.open('get', 'http://bowpi:8080/status')
+  wxhr.open('get', 'http://zeropi:8080/status')
   wxhr.responseType = 'json';
   wxhr.onload = function() {
     if (wxhr.status == 200) {
       var data = wxhr.response;
-      document.getElementById('weather').innerHTML="<table><tr><td>Temp:</td><td>" + data.Temp + " C</td></tr><tr><td>Pressure:</td><td>" + data.Pres + " mBar</td></tr></table>";
+      document.getElementById('weather').innerHTML="<table><tr><td>Temp:</td><td>" + data.Temp.toFixed(2) + " C</td></tr><tr><td>Pressure:</td><td>" + data.Pres.toFixed(1) + " mBar</td></tr></table>";
     }
   }
   wxhr.send();
 
   var wgr = new XMLHttpRequest();
-  wgr.open('get', 'http://bowpi:8080/history?readings='+readings+'&interval='+Math.round(interval/3), true);
+  wgr.open('get', 'http://zeropi:8080/history?readings='+readings+'&interval='+Math.round(interval/3), true);
   wgr.responseType = 'json';
   wgr.onload = function() {
     if (wgr.status == 200) {
